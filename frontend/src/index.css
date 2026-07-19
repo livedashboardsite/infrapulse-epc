@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --glass-bg-light: rgba(255, 255, 255, 0.15);
+  --glass-border-light: rgba(255, 255, 255, 0.2);
+  --glass-shadow-light: rgba(0, 0, 0, 0.1);
+  --glass-inset-light: rgba(255, 255, 255, 0.3);
+  --canvas-bg-light: #E5E5EA;
+  --mesh-gradient-1-light: rgba(56, 189, 248, 0.5);
+  --mesh-gradient-2-light: rgba(167, 139, 250, 0.5);
+  --mesh-gradient-3-light: rgba(251, 146, 60, 0.4);
+  --mesh-gradient-4-light: rgba(34, 197, 94, 0.3);
+  --text-primary-light: #0F172A;
+  --text-secondary-light: #475569;
+
+  --glass-bg-dark: rgba(15, 23, 42, 0.6);
+  --glass-border-dark: rgba(255, 255, 255, 0.1);
+  --glass-shadow-dark: rgba(0, 0, 0, 0.4);
+  --glass-inset-dark: rgba(255, 255, 255, 0.05);
+  --canvas-bg-dark: #000000;
+  --mesh-gradient-dark: rgba(30, 30, 35, 0.45);
+  --text-primary-dark: #F8FAFC;
+  --text-secondary-dark: #94A3B8;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.light-mode {
+  --glass-bg: var(--glass-bg-light);
+  --glass-border: var(--glass-border-light);
+  --glass-shadow: var(--glass-shadow-light);
+  --glass-inset: var(--glass-inset-light);
+  --canvas-bg: var(--canvas-bg-light);
+  --text-primary: var(--text-primary-light);
+  --text-secondary: var(--text-secondary-light);
+  --mesh-gradient-1: var(--mesh-gradient-1-light);
+  --mesh-gradient-2: var(--mesh-gradient-2-light);
+  --mesh-gradient-3: var(--mesh-gradient-3-light);
+  --mesh-gradient-4: var(--mesh-gradient-4-light);
+}
+
+.dark-mode {
+  --glass-bg: var(--glass-bg-dark);
+  --glass-border: var(--glass-border-dark);
+  --glass-shadow: var(--glass-shadow-dark);
+  --glass-inset: var(--glass-inset-dark);
+  --canvas-bg: var(--canvas-bg-dark);
+  --text-primary: var(--text-primary-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --mesh-gradient-1: var(--mesh-gradient-dark);
+  --mesh-gradient-2: var(--mesh-gradient-dark);
+  --mesh-gradient-3: var(--mesh-gradient-dark);
+  --mesh-gradient-4: var(--mesh-gradient-dark);
+}
+
+.canvas-background {
+  background-color: var(--canvas-bg);
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.mesh-gradient {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mesh-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(at 40% 20%, var(--mesh-gradient-1), transparent 50%),
+    radial-gradient(at 80% 0%, var(--mesh-gradient-2), transparent 50%),
+    radial-gradient(at 0% 50%, var(--mesh-gradient-3), transparent 50%),
+    radial-gradient(at 80% 50%, var(--mesh-gradient-4), transparent 50%);
+}
+
+.liquid-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  box-shadow:
+    0 20px 40px -10px var(--glass-shadow),
+    inset 0 1px 1px 0 var(--glass-inset);
+}
+
+.liquid-btn {
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+}
+
+.liquid-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -5px var(--glass-shadow);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #8B5CF6, #06B6D4, #10B981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
