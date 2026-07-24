@@ -7,13 +7,15 @@ export default function RfiIntelligenceTab() {
   const [allRfis, setAllRfis] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/rfi/all').then(res => res.json()).then(setAllRfis);
+    fetch('/api/rfi/all').then(res => res.json()).then(setAllRfis);
   }, []);
 
   const handleSearch = async () => {
-    const res = await fetch(`http://localhost:8000/api/rfi/search?query=${encodeURIComponent(query)}`);
+    const res = await fetch(`/api/rfi/search?query=${encodeURIComponent(query)}`);
     const data = await res.json();
-    setResults(data.results);
+    // data may be {results:[...]}, or {total_results:N, results:[...]}, or a plain string fallback
+    const parsed = Array.isArray(data) ? data : (Array.isArray(data?.results) ? data.results : []);
+    setResults(parsed);
   };
 
   return (

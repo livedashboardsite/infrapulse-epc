@@ -2,20 +2,20 @@ import { useState } from 'react';
 import { CheckCircle, XCircle, AlertTriangle, PlayCircle, RefreshCw } from 'lucide-react';
 
 export default function CommissioningConsoleTab({ steps, onInjectDelay }) {
-  const [selectedStep, setSelectedStep] = useState(steps[0]);
+  const [selectedStep, setSelectedStep] = useState(steps[0] || null);
   const [testNotes, setTestNotes] = useState('');
   const [evaluation, setEvaluation] = useState(null);
   const [stepStatuses, setStepStatuses] = useState({});
 
   const handleEvaluate = async () => {
-    const response = await fetch('http://localhost:8000/api/commissioning/evaluate', {
+    const response = await fetch('/api/commissioning/evaluate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ test_notes: testNotes })
     });
     const data = await response.json();
     setEvaluation(data);
-    setStepStatuses({ ...stepStatuses, [selectedStep.id]: data.status });
+    setStepStatuses({ ...stepStatuses, [activeStep.id]: data.status });
 
     if (data.status === 'fail') {
       onInjectDelay(data.risk_task_ids, data.delay_days);
@@ -29,6 +29,12 @@ export default function CommissioningConsoleTab({ steps, onInjectDelay }) {
     return null;
   };
 
+  if (!steps || steps.length === 0) {
+    return <div className="liquid-panel p-6 text-center" style={{ color: 'var(--text-secondary)' }}>Loading commissioning steps...</div>;
+  }
+
+  const activeStep = selectedStep || steps[0];
+
   return (
     <div className="grid lg:grid-cols-3 gap-6">
       <div className="liquid-panel p-6">
@@ -38,7 +44,7 @@ export default function CommissioningConsoleTab({ steps, onInjectDelay }) {
             <button
               key={step.id}
               onClick={() => { setSelectedStep(step); setEvaluation(null); setTestNotes(''); }}
-              className={`w-full liquid-panel p-4 text-left transition-all ${selectedStep.id === step.id ? 'border-2 border-violet-500' : ''}`}
+              className={`w-full liquid-panel p-4 text-left transition-all ${activeStep && activeStep.id === step.id ? 'border-2 border-violet-500' : ''}`}
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -57,11 +63,11 @@ export default function CommissioningConsoleTab({ steps, onInjectDelay }) {
           <div className="flex items-center gap-3 mb-6">
             <PlayCircle className="w-7 h-7 text-violet-400" />
             <div>
-              <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{selectedStep.name}</h2>
-              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{selectedStep.category} · Step {selectedStep.id} of {steps.length}</p>
+              <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{activeStep.name}</h2>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{activeStep.category} · Step {activeStep.id} of {steps.length}</p>
             </div>
           </div>
-          <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>{selectedStep.description}</p>
+          <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>{activeStep.description}</p>
 
           <div className="mb-6">
             <label style={{ color: 'var(--text-primary)' }} className="block mb-2 font-semibold">Test Notes / Observations</label>

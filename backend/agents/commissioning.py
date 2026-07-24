@@ -1,5 +1,33 @@
+import json
+from typing import List, Optional, Any, Dict
+from pydantic import BaseModel, Field
+from google.antigravity import Agent
 
-from typing import List, Dict, Any
+
+class CommissioningEvaluation(BaseModel):
+    status: str = Field(description="Classification: pass, fail, or warning")
+    delay_days: int = Field(description="Number of delay days to inject if fail or warning")
+    risk_task_ids: List[int] = Field(description="Task IDs of downstream tasks affected by this delay")
+    summary: str = Field(description="Natural language evaluation summary")
+    affected_systems: List[str] = Field(description="Systems affected by the issue (e.g., Electrical, Mechanical)")
+    test_notes: str = Field(description="Original test notes")
+
+
+COMMISSIONING_AGENT = Agent(
+    model="gemini-2.0-flash",
+    response_schema=CommissioningEvaluation,
+    system_prompt=(
+        "You are a Commissioning Test Evaluation Agent for data centre projects. "
+        "Analyze test notes and observations to classify result:\n"
+        "- pass: All criteria met, no issues found\n"
+        "- fail: Critical failures detected (shutdown, trip, overheat, pressure drop, error, fault) "
+        "- typically 5-10 day delay, affects downstream integrated tests\n"
+        "- warning: Minor issues found (calibration, adjustment) - typically 1-3 day delay\n\n"
+        "For failures, identify affected downstream tasks (typically integrated system tests "
+        "like step 20 and final inspection step 22). For warnings, only immediate dependent tasks. "
+        "Assign realistic delay days proportional to severity."
+    ),
+)
 
 
 COMMISSIONING_STEPS = [
@@ -29,39 +57,17 @@ COMMISSIONING_STEPS = [
 
 
 def evaluate_test_result(test_notes: str) -> Dict[str, Any]:
-    test_notes_lower = test_notes.lower()
-
-    failure_keywords = ["shut down", "failed", "trip", "overheat", "pressure drop", "error", "fault"]
-    warning_keywords = ["warning", "minor issue", "adjustment", "calibrate"]
-
-    status = "pass"
-    delay_days = 0
-    risk_task_ids = []
-    summary = ""
-
-    if any(keyword in test_notes_lower for keyword in failure_keywords):
-        status = "fail"
-        delay_days = 7
-        risk_task_ids = [20, 22]  # Tasks that depend on commissioning
-        summary = "Critical failure detected: Automatic 7-day delay injected; project end date recalculated."
-    elif any(keyword in test_notes_lower for keyword in warning_keywords):
-        status = "warning"
-        delay_days = 2
-        risk_task_ids = [20]
-        summary = "Minor issue detected: 2-day buffer recommended."
-    else:
-        status = "pass"
-        summary = "Test passed successfully."
-
-    return {
-        "status": status,
-        "delay_days": delay_days,
-        "risk_task_ids": risk_task_ids,
-        "summary": summary,
-        "test_notes": test_notes
-    }
+    prompt = (
+        f"Evaluate the following commissioning test notes:\n\n"
+        f"{test_notes}\n\n"
+        f"Classify as pass/fail/warning. If fail, assign appropriate delay days (5-10) "
+        f"and affected downstream task IDs (typically 20, 22 for major failures). "
+        f"If warning, assign 1-3 delay days and minimal affected tasks. "
+        f"Identify which systems are affected."
+    )
+    result = COMMISSIONING_AGENT.run(prompt=prompt)
+    return result
 
 
 def get_commissioning_steps() -> List[Dict[str, Any]]:
     return COMMISSIONING_STEPS
-

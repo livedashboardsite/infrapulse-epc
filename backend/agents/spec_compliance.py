@@ -1,80 +1,58 @@
-
-from typing import List, Dict, Any
-from dataclasses import dataclass
-
-
-@dataclass
-class ComplianceCheck:
-    parameter: str
-    required: str
-    submitted: str
-    compliant: bool
-    standard: str
+import json
+from typing import List, Optional, Any
+from pydantic import BaseModel, Field
+from google.antigravity import Agent, Document
 
 
-TIA_942_TIER_III = {
-    "battery_runtime_minutes": 20,
-    "redundancy": "N+2",
-    "ups_efficiency_percent": 94,
-    "chiller_n_plus_1": True
-}
+class ComplianceCheck(BaseModel):
+    parameter: str = Field(description="Name of the parameter being checked")
+    required: str = Field(description="Required value per standard")
+    submitted: str = Field(description="Value submitted for review")
+    compliant: bool = Field(description="Whether the submission meets the requirement")
+    standard: str = Field(description="Standard reference (e.g., TIA-942)")
 
 
-def check_submittal(submittal_data: Dict[str, Any]) -> Dict[str, Any]:
-    checks = []
+class SpecComplianceResult(BaseModel):
+    submittal_name: str = Field(description="Name of the submittal reviewed")
+    checks: List[ComplianceCheck] = Field(description="List of compliance checks performed")
+    overall_compliant: bool = Field(description="True if all checks pass")
+    compliance_score: float = Field(description="Percentage of checks that passed")
+    summary: str = Field(description="Natural language summary of findings")
 
-    checks.append(
-        ComplianceCheck(
-            parameter="Battery Runtime",
-            required="≥20 minutes",
-            submitted=f"{submittal_data.get('battery_runtime_minutes', 0)} minutes",
-            compliant=submittal_data.get('battery_runtime_minutes', 0) >= TIA_942_TIER_III["battery_runtime_minutes"],
-            standard="TIA-942 Tier III"
-        )
+
+COMPLIANCE_AGENT = Agent(
+    model="gemini-2.0-flash",
+    response_schema=SpecComplianceResult,
+    system_prompt=(
+        "You are a TIA-942 and Uptime Institute compliance verification agent for data centre projects. "
+        "Analyze submittal data against Tier III requirements:\n"
+        "- Battery Runtime: minimum 20 minutes\n"
+        "- Redundancy: N+2 required for Tier III\n"
+        "- UPS Efficiency: minimum 94%\n"
+        "- Chiller Redundancy: N+1 minimum\n"
+        "Return structured compliance results."
+    ),
+)
+
+
+def check_submittal(submittal_data: dict[str, Any]) -> dict[str, Any]:
+    submittal_text = json.dumps(submittal_data, indent=2)
+    prompt = (
+        f"Review the following submittal against TIA-942 Tier III standards:\n\n"
+        f"{submittal_text}\n\n"
+        f"Evaluate battery runtime (≥20min), redundancy (N+2), UPS efficiency (≥94%), "
+        f"and chiller N+1 redundancy. Provide a compliance score and summary."
     )
-    checks.append(
-        ComplianceCheck(
-            parameter="Redundancy",
-            required="N+2",
-            submitted=submittal_data.get('redundancy', 'N'),
-            compliant=submittal_data.get('redundancy', 'N') == TIA_942_TIER_III["redundancy"],
-            standard="TIA-942 Tier III"
-        )
-    )
-    checks.append(
-        ComplianceCheck(
-            parameter="UPS Efficiency",
-            required="≥94%",
-            submitted=f"{submittal_data.get('ups_efficiency_percent', 0)}%",
-            compliant=submittal_data.get('ups_efficiency_percent', 0) >= TIA_942_TIER_III["ups_efficiency_percent"],
-            standard="TIA-942 Tier III"
-        )
-    )
-    checks.append(
-        ComplianceCheck(
-            parameter="Chiller Redundancy",
-            required="N+1",
-            submitted="Yes" if submittal_data.get('chiller_n_plus_1', False) else "No",
-            compliant=submittal_data.get('chiller_n_plus_1', False) == TIA_942_TIER_III["chiller_n_plus_1"],
-            standard="TIA-942 Tier III"
-        )
-    )
+    result = COMPLIANCE_AGENT.run(prompt=prompt)
+    return result
 
-    compliant_count = sum(1 for c in checks if c.compliant)
-    total_count = len(checks)
 
-    return {
-        "submittal_name": submittal_data.get('submittal_name', 'Unknown'),
-        "checks": [
-            {
-                "parameter": c.parameter,
-                "required": c.required,
-                "submitted": c.submitted,
-                "compliant": c.compliant,
-                "standard": c.standard
-            } for c in checks
-        ],
-        "overall_compliant": compliant_count == total_count,
-        "compliance_score": round((compliant_count / total_count) * 100, 1)
-    }
-
+def check_submittal_document(document: Document) -> dict[str, Any]:
+    prompt = (
+        "Review the uploaded submittal document against TIA-942 Tier III standards. "
+        "Extract the submittal name, evaluate each parameter against requirements "
+        "(battery runtime ≥20min, redundancy N+2, UPS efficiency ≥94%, chiller N+1), "
+        "and return a structured compliance report."
+    )
+    result = COMPLIANCE_AGENT.run(prompt=prompt, document=document)
+    return result

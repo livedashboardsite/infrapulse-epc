@@ -1,17 +1,25 @@
-
-from fastapi import FastAPI, HTTPException
+import os
+import tempfile
+from pathlib import Path
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Dict, Any
 from datetime import datetime
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from ground_truth import get_ground_truth_tasks, get_benchmark_metrics
 from cpm_engine import create_cpm_graph, calculate_cpm, recalculate_with_delays
-from agents.spec_compliance import check_submittal
+from agents.spec_compliance import check_submittal, check_submittal_document
 from agents.schedule_risk import predict_risks
 from agents.supply_chain import get_live_weather, get_supply_chain_tracking
 from agents.commissioning import evaluate_test_result, get_commissioning_steps
 from agents.rfi_knowledge import search_rfi, get_past_rfis
+from google.antigravity import Document
 
 
 app = FastAPI(title="InfraPulse EPC API", version="1.0.0")
@@ -19,11 +27,16 @@ app = FastAPI(title="InfraPulse EPC API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Serve built React frontend as static files
+FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
+if FRONTEND_DIST.exists():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
 
 
 class SubmittalData(BaseModel):
@@ -44,7 +57,10 @@ class RecalculateData(BaseModel):
 
 @app.get("/")
 async def root():
-    return {"message": "InfraPulse EPC AI Intelligence Platform API"}
+    index = FRONTEND_DIST / "index.html"
+    if FRONTEND_DIST.exists() and index.exists():
+        return FileResponse(index)
+    return {"message": "InfraPulse EPC API — frontend not built. Run: cd frontend && npm run build"}
 
 
 @app.get("/api/tasks")
@@ -62,6 +78,19 @@ async def get_metrics():
 @app.post("/api/spec-compliance/check")
 async def check_spec_compliance(submittal: SubmittalData):
     return check_submittal(submittal.model_dump())
+
+
+@app.post("/api/spec-compliance/upload")
+async def check_spec_compliance_upload(file: UploadFile = File(...)):
+    contents = await file.read()
+    if file.filename and file.filename.endswith(".pdf"):
+        mime_type = "application/pdf"
+    else:
+        mime_type = "text/plain"
+
+    doc = Document(content=contents, mime_type=mime_type)
+    result = check_submittal_document(doc)
+    return result
 
 
 @app.get("/api/schedule-risks")
@@ -109,3 +138,11 @@ if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 
+
+# Catch-all route: serve React SPA index.html for all non-API routes
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    index = FRONTEND_DIST / "index.html"
+    if FRONTEND_DIST.exists() and index.exists():
+        return FileResponse(index)
+    return {"message": "Frontend not built. Run: cd frontend && npm run build"}

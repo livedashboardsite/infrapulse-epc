@@ -1,6 +1,15 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function MetricsPanel({ metrics }) {
+  // Guard: don't render until metrics are loaded from the API
+  if (!metrics || !metrics.days_delay_warning_lead_time) {
+    return (
+      <div className="liquid-panel p-6 text-center" style={{ color: 'var(--text-secondary)' }}>
+        Loading benchmark metrics...
+      </div>
+    );
+  }
+
   const chartData = [
     { name: 'Lead Time', value: metrics.days_delay_warning_lead_time, unit: 'days' },
     { name: 'Automation', value: metrics.test_automation_coverage_percent, unit: '%' },

@@ -1,0 +1,134 @@
+[
+  {
+    "id": "RFI-001",
+    "subject": "Cable tray routing in Data Hall A",
+    "question": "Can we route 400V cables above fiber tray as per TIA-942?",
+    "answer": "No, TIA-942 Section 8.2 specifies power and data segregation; maintain 300mm vertical separation. Power cables must not share the same tray with data cables. A minimum of 300mm vertical clearance is required when crossing.",
+    "status": "Resolved",
+    "citations": ["TIA-942 Section 8.2"],
+    "category": "Electrical",
+    "date": "2024-01-15",
+    "standard_ref": "TIA-942-B-2017"
+  },
+  {
+    "id": "RFI-002",
+    "subject": "Battery room ventilation requirements",
+    "question": "What is the required air change rate for VRLA battery room?",
+    "answer": "Uptime Institute Tier III requires minimum 12 air changes per hour for battery rooms. Additionally, hydrogen detection shall be provided with alarm set at 1% of LFL (Lower Flammability Limit).",
+    "status": "Resolved",
+    "citations": ["Uptime Institute Tier III Standard", "NFPA 75"],
+    "category": "Mechanical",
+    "date": "2024-01-22",
+    "standard_ref": "Uptime Institute Tier III"
+  },
+  {
+    "id": "RFI-003",
+    "subject": "CRAC unit redundancy",
+    "question": "Is N+1 sufficient for CRAC units or do we need N+2?",
+    "answer": "N+1 is acceptable for Tier III; however, N+2 is recommended for 2N distribution. The redundant unit must be capable of maintaining design conditions if any single unit fails. Per TIA-942, cooling redundancy shall match the electrical distribution topology.",
+    "status": "Resolved",
+    "citations": ["TIA-942", "Uptime Tier III"],
+    "category": "Mechanical",
+    "date": "2024-02-01",
+    "standard_ref": "TIA-942-B-2017"
+  },
+  {
+    "id": "RFI-004",
+    "subject": "UPS battery runtime for Tier III",
+    "question": "What is the minimum battery runtime required for UPS systems in a Tier III data centre?",
+    "answer": "TIA-942 Tier III requires a minimum of 20 minutes battery runtime at full load. This assumes generator start-up and stabilisation within 5-10 minutes with the remaining 10-15 minutes as safety margin. Uptime Institute recommends 25-30 minutes for added safety.",
+    "status": "Resolved",
+    "citations": ["TIA-942 Section 5.2", "Uptime Institute Tier III"],
+    "category": "Electrical",
+    "date": "2024-02-10",
+    "standard_ref": "TIA-942-B-2017"
+  },
+  {
+    "id": "RFI-005",
+    "subject": "Generator fuel storage duration",
+    "question": "How many hours of generator runtime must be supported by on-site fuel storage?",
+    "answer": "TIA-942 Tier III requires minimum 12 hours of generator operation at full load with on-site fuel storage. Uptime Institute recommends 24 hours for enhanced resilience. Fuel polishing systems must be installed for diesel storage exceeding 30 days.",
+    "status": "Resolved",
+    "citations": ["TIA-942", "NFPA 110"],
+    "category": "Electrical",
+    "date": "2024-02-15",
+    "standard_ref": "NFPA 110"
+  },
+  {
+    "id": "RFI-006",
+    "subject": "Data hall floor loading requirements",
+    "question": "What is the minimum raised floor loading capacity for a Tier III data hall?",
+    "answer": "Minimum 12 kN/m² (250 lb/ft²) dead load for Tier III data halls per TIA-942. For high-density zones, 20 kN/m² (400 lb/ft²) is recommended. Raised floor pedestals must be seismically braced for Seismic Zone 3 and above.",
+    "status": "Resolved",
+    "citations": ["TIA-942", "IBC 2021"],
+    "category": "Structural",
+    "date": "2024-02-20",
+    "standard_ref": "TIA-942-B-2017"
+  },
+  {
+    "id": "RFI-007",
+    "subject": "Fire suppression clean agent quantity",
+    "question": "What concentration level of Novec 1230 is required for a data hall fire suppression system?",
+    "answer": "NFPA 2001 requires minimum 4.5% volumetric concentration for Novec 1230 in occupied spaces. For unoccupied data halls, 5.5-6.0% is recommended to ensure rapid suppression. Hold time must be minimum 10 minutes per NFPA 75.",
+    "status": "Resolved",
+    "citations": ["NFPA 2001", "NFPA 75"],
+    "category": "Life Safety",
+    "date": "2024-03-01",
+    "standard_ref": "NFPA 2001"
+  },
+  {
+    "id": "RFI-008",
+    "subject": "Telecom fiber entry diversity",
+    "question": "How many diverse fiber entry points are required for Tier III certification?",
+    "answer": "TIA-942 Tier III requires minimum 2 geographically diverse fiber entry points with separate conduit routes. Each entry must be from a different direction and separated by at least 20m. Handholes must be located at least 3m from the building perimeter.",
+    "status": "Resolved",
+    "citations": ["TIA-942 Section 6.1"],
+    "category": "Network",
+    "date": "2024-03-05",
+    "standard_ref": "TIA-942-B-2017"
+  },
+  {
+    "id": "RFI-009",
+    "subject": "Chiller approach temperature",
+    "question": "What is the acceptable approach temperature for Tier III chillers?",
+    "answer": "Maximum approach temperature for Tier III centrifugal chillers is 3.0°C at full load. For screw chillers, 4.0°C is acceptable. If approach exceeds 5.0°C, tube cleaning is required. Approach should be measured at AHRI standard conditions.",
+    "status": "Resolved",
+    "citations": ["ASHRAE 90.1", "AHRI 550/590"],
+    "category": "Mechanical",
+    "date": "2024-03-10",
+    "standard_ref": "ASHRAE 90.1-2022"
+  },
+  {
+    "id": "RFI-010",
+    "subject": "UPS efficiency requirements",
+    "question": "What is the minimum UPS efficiency required for Tier III certification with TIA-942?",
+    "answer": "TIA-942 recommends UPS efficiency of at least 94% at typical load levels (40-60% loading). Modern transformer-less UPS systems achieve 96-97% efficiency in ECO mode. Efficiency testing must be performed per IEC 62040-3 at 25%, 50%, 75%, and 100% load.",
+    "status": "Resolved",
+    "citations": ["TIA-942", "IEC 62040-3"],
+    "category": "Electrical",
+    "date": "2024-03-15",
+    "standard_ref": "TIA-942-B-2017"
+  },
+  {
+    "id": "RFI-011",
+    "subject": "Grounding electrode system requirements",
+    "question": "What are the grounding requirements for a Tier III data centre per TIA-942?",
+    "answer": "TIA-942 requires a mesh-type grounding electrode system with resistance to earth not exceeding 5 ohms. All metallic components must be bonded to the grounding grid. A dedicated signal reference grid (SRG) is required under raised floor areas with 600mm x 600mm spacing.",
+    "status": "Resolved",
+    "citations": ["TIA-942 Section 7.1", "IEEE Std 1100"],
+    "category": "Electrical",
+    "date": "2024-03-20",
+    "standard_ref": "TIA-942-B-2017"
+  },
+  {
+    "id": "RFI-012",
+    "subject": "VESDA sampling pipe network",
+    "question": "What is the maximum sampling pipe length for VESDA systems in a data hall?",
+    "answer": "Per NFPA 72 and VESDA manufacturer specifications, maximum sampling pipe length is 100m per pipe network for VESDA-E VEA. Maximum number of sampling holes is 40 per pipe. Transport time must not exceed 60 seconds from farthest point to detector.",
+    "status": "Resolved",
+    "citations": ["NFPA 72", "VESDA Design Guide"],
+    "category": "Life Safety",
+    "date": "2024-04-01",
+    "standard_ref": "NFPA 72"
+  }
+]

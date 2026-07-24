@@ -4,3 +4,7 @@ networkx
 httpx
 pydantic
 python-multipart
+google-antigravity>=0.1.0
+python-dotenv>=1.0.0
+google-genai>=1.0.0
+openai>=1.0.0

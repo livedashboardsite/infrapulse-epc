@@ -1,0 +1,85 @@
+{
+  "shipments": [
+    {
+      "id": "SHP-001",
+      "item": "2MW Diesel Generator",
+      "origin": "Chennai, India",
+      "destination": "Pune, India",
+      "status": "Arrived",
+      "eta_days": 0,
+      "route": "NH48",
+      "position_lat": 15.950755366593976,
+      "position_lon": 77.21151382694677,
+      "progress_pct": 95.0,
+      "last_updated": "2026-07-24T12:31:02Z",
+      "mitigations": [
+        {
+          "option": "Air Freight Replacement",
+          "cost_usd": 18000,
+          "time_saved_days": 14
+        }
+      ]
+    },
+    {
+      "id": "SHP-002",
+      "item": "UPS Modules (N+2)",
+      "origin": "Singapore",
+      "destination": "Pune, India",
+      "status": "Arrived",
+      "eta_days": 0,
+      "route": "Sea + Road",
+      "position_lat": 13.403733074559609,
+      "position_lon": 78.67745024892002,
+      "progress_pct": 95.0,
+      "last_updated": "2026-07-24T12:31:02Z",
+      "mitigations": [
+        {
+          "option": "Expedite Customs",
+          "cost_usd": 2500,
+          "time_saved_days": 3
+        }
+      ]
+    },
+    {
+      "id": "SHP-003",
+      "item": "LV Switchgear Panels",
+      "origin": "Mumbai, India",
+      "destination": "Pune, India",
+      "status": "Arrived",
+      "eta_days": 0,
+      "route": "NH48",
+      "position_lat": 18.773136254785282,
+      "position_lon": 73.53427145178144,
+      "progress_pct": 95.0,
+      "last_updated": "2026-07-24T12:31:02Z",
+      "mitigations": [
+        {
+          "option": "Local Pickup",
+          "cost_usd": 800,
+          "time_saved_days": 1
+        }
+      ]
+    },
+    {
+      "id": "SHP-004",
+      "item": "Chillers (2 x 500TR)",
+      "origin": "Bangalore, India",
+      "destination": "Pune, India",
+      "status": "Delayed",
+      "eta_days": 8.0,
+      "route": "NH48 via Bangalore",
+      "position_lat": 14.5,
+      "position_lon": 76.5,
+      "progress_pct": 30,
+      "last_updated": "2026-07-24T12:31:02Z",
+      "delay_reason": "Truck breakdown near Chitradurga, replacement vehicle dispatched",
+      "mitigations": [
+        {
+          "option": "Split Shipment (partial air freight)",
+          "cost_usd": 12000,
+          "time_saved_days": 6
+        }
+      ]
+    }
+  ]
+}

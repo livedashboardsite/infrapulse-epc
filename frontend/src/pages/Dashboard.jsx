@@ -33,19 +33,19 @@ export default function Dashboard() {
     if (!user) return;
 
     const fetchData = async () => {
-      fetch('http://localhost:8000/api/tasks').then(res => res.json()).then(data => {
+      fetch('/api/tasks').then(res => res.json()).then(data => {
         setTasks(data.tasks);
       });
 
-      fetch('http://localhost:8000/api/metrics').then(res => res.json()).then(setMetrics);
+      fetch('/api/metrics').then(res => res.json()).then(setMetrics);
 
-      fetch('http://localhost:8000/api/schedule-risks').then(res => res.json()).then(setRisks);
+      fetch('/api/schedule-risks').then(res => res.json()).then(setRisks);
 
-      fetch('http://localhost:8000/api/weather').then(res => res.json()).then(setWeather);
+      fetch('/api/weather').then(res => res.json()).then(setWeather);
 
-      fetch('http://localhost:8000/api/supply-chain').then(res => res.json()).then(setSupplyChain);
+      fetch('/api/supply-chain').then(res => res.json()).then(setSupplyChain);
 
-      fetch('http://localhost:8000/api/commissioning/steps').then(res => res.json()).then(setCommissioningSteps);
+      fetch('/api/commissioning/steps').then(res => res.json()).then(setCommissioningSteps);
     };
 
     fetchData();
@@ -57,7 +57,7 @@ export default function Dashboard() {
       newDelays[id] = (newDelays[id] || 0) + days;
     });
     setDelays(newDelays);
-    const res = await fetch('http://localhost:8000/api/recalculate', {
+    const res = await fetch('/api/recalculate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ delays: newDelays })
